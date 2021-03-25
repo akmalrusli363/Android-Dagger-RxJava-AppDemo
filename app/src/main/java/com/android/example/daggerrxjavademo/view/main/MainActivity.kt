@@ -4,9 +4,9 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.android.example.daggerrxjavademo.R
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
 import com.android.example.daggerrxjavademo.injector.module.Cached
 import com.android.example.daggerrxjavademo.injector.module.NonCached
@@ -41,18 +41,45 @@ class MainActivity : AppCompatActivity() {
 
         binding.viewModel = viewModel
         binding.rvRepositories.adapter = RepositoryRecyclerAdapter()
+        binding.svUserSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    search(query)
+                    return true
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+
     }
 
-    fun search(view: View) {
-        viewModel.searchQuery = binding.svUserSearch.query.toString()
-        Log.e("GitSearcher", "Searching... ${viewModel.searchQuery}")
+    private fun search(query: String) {
+        viewModel.searchQuery = query
+        Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
 
         Thread {
             val result = RepositoryFetcher(this).fetchRepository(viewModel.searchQuery)
             Log.d("GitSearcher", "Found $result")
-            if (result != null) {
-                viewModel.setRepositoryData(result)
+            runOnUiThread {
+                viewModel.setRepositoryData(result ?: listOf())
+                toggleResultAvailability(result != null)
             }
         }.start()
+    }
+
+    private fun toggleResultAvailability(available:Boolean) {
+        binding.apply {
+            if (available) {
+                llUserNotExist.visibility = View.GONE
+                llUserProfile.visibility = View.VISIBLE
+            } else {
+                llUserNotExist.visibility = View.VISIBLE
+                llUserProfile.visibility = View.GONE
+            }
+        }
     }
 }

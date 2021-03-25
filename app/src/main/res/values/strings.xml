@@ -2,4 +2,7 @@
     <string name="app_name">Dagger RxJava Demo</string>
     <string name="github_username_search">GitHub username</string>
     <string name="search">Search</string>
+    <string name="no_user_repositories">No user repository data :(</string>
+    <string name="no_user_repositories_reason">Reason: User not exist or user has no repository</string>
+    <string name="error_occurred">Error occurred!</string>
 </resources>

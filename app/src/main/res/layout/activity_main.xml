@@ -21,20 +21,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space_large"
-            android:iconifiedByDefault="false"
             android:hint="@string/github_username_search"
+            android:iconifiedByDefault="false"
             android:imeOptions="actionSearch"
             android:inputType="text|textNoSuggestions"
             android:queryHint="@string/github_username_search"
             android:singleLine="true" />
-
-        <Button
-            android:id="@+id/btn_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="search"
-            android:layout_gravity="center"
-            android:text="@string/search" />
 
         <View
             android:layout_width="match_parent"
@@ -43,6 +35,7 @@
             android:background="@color/primary_light" />
 
         <LinearLayout
+            android:id="@+id/ll_user_profile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -50,6 +43,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_medium"
                 android:orientation="vertical">
 
                 <TextView
@@ -105,7 +99,38 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:listData="@{viewModel.repositories}"
                 tools:listitem="@layout/rv_repository_item" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_user_not_exist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:showIn="@layout/activity_main">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/error_occurred"
+                android:paddingBottom="@dimen/space_medium"
+                android:src="@drawable/ic_baseline_error_large" />
+
+            <TextView
+                android:id="@+id/tv_error_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_user_repositories"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+
+            <TextView
+                android:id="@+id/tv_error_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_user_repositories_reason"
+                android:textAlignment="center" />
         </LinearLayout>
     </LinearLayout>
 </layout>
