@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dagger RxJava Demo</string>
+    <string name="app_name">GitHub Repo Explorer</string>
     <string name="github_username_search">GitHub username</string>
     <string name="search">Search</string>
     <string name="no_user_repositories">No user repository data :(</string>

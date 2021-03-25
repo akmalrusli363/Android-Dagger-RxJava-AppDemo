@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
 
         Thread {
-            val result = RepositoryFetcher(this).fetchRepository(viewModel.searchQuery)
+            val result = RepositoryFetcher(this).fetchRepository(query)
             Log.d("GitSearcher", "Found $result")
             runOnUiThread {
                 viewModel.setRepositoryData(result ?: listOf())
