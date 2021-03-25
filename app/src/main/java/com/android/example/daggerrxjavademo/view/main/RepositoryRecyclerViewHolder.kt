@@ -16,6 +16,13 @@ class RepositoryRecyclerViewHolder(private val itemBinding: RvRepositoryItemBind
             itemBinding.tvRepositoryFullname.text = fullName
             itemBinding.tvDescription.text = description ?: noDescriptionString
             itemBinding.executePendingBindings()
+
         }
     }
+
+//    private fun addOnClickListener(repositoryItem: Repository) {
+//        itemBinding.root.setOnClickListener {
+//            val intent =
+//        }
+//    }
 }
