@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
 import com.android.example.daggerrxjavademo.injector.module.Cached
 import com.android.example.daggerrxjavademo.injector.module.NonCached
-import com.android.example.daggerrxjavademo.model.Repository
-import com.android.example.daggerrxjavademo.model.RepositoryFetcher
+import com.android.example.daggerrxjavademo.model.DataFetcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -66,14 +66,29 @@ class MainActivity : AppCompatActivity() {
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
 
         GlobalScope.run {
-            launch(Dispatchers.IO) {
-                val result = RepositoryFetcher(this@MainActivity).fetchRepository(query)
-                Log.d("GitSearcher", "Found $result")
+            fetchUserProfile(this, query)
+            fetchUserRepository(this, query)
+        }
+    }
 
-                launch(Dispatchers.Main) {
-                    viewModel.setRepositoryData(result ?: listOf())
-                    toggleResultAvailability(result != null)
-                }
+    private fun fetchUserProfile(coroutineScope: CoroutineScope, query: String) {
+        coroutineScope.launch(Dispatchers.IO) {
+            val userProfile = DataFetcher(this@MainActivity).fetchUserProfile(query)
+            Log.d("GitSearcher", "Found $userProfile")
+            launch(Dispatchers.Main) {
+                viewModel.setUserProfile(userProfile)
+            }
+        }
+    }
+
+    private fun fetchUserRepository(coroutineScope: CoroutineScope, query: String) {
+        coroutineScope.launch(Dispatchers.IO) {
+            val listRepos = DataFetcher(this@MainActivity).fetchRepository(query)
+            Log.d("GitSearcher", "Found $listRepos")
+
+            launch(Dispatchers.Main) {
+                viewModel.setRepositoryData(listRepos ?: listOf())
+                toggleResultAvailability(listRepos != null)
             }
         }
     }

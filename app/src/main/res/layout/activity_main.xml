@@ -38,13 +38,14 @@
             android:id="@+id/ll_user_profile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_medium"
-                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
@@ -54,6 +55,7 @@
                     android:layout_margin="@dimen/space_medium"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:text="@{viewModel.userProfile.username}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="GitHub User (@gh-user)" />
@@ -63,6 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/space_small"
+                    android:text="@{@string/repository_count_format(viewModel.userProfile.repoCount)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tv_following_counts"
                     app:layout_constraintHorizontal_chainStyle="spread"
@@ -75,6 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/space_small"
+                    android:text="@{@string/following_count_format(viewModel.userProfile.following)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tv_follower_counts"
                     app:layout_constraintStart_toEndOf="@+id/tv_repo_counts"
@@ -86,6 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/space_small"
+                    android:text="@{@string/follower_count_format(viewModel.userProfile.followers)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/tv_following_counts"

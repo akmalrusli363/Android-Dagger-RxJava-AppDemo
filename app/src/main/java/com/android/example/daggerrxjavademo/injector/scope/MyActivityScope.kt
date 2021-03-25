@@ -1,6 +1,5 @@
 package com.android.example.daggerrxjavademo.injector.scope
 
-import java.lang.annotation.RetentionPolicy
 import javax.inject.Scope
 
 @Scope

@@ -5,4 +5,8 @@
     <string name="no_user_repositories">No user repository data :(</string>
     <string name="no_user_repositories_reason">Reason: User not exist or user has no repository</string>
     <string name="error_occurred">Error occurred!</string>
+
+    <string name="repository_count_format">%d repositories</string>
+    <string name="following_count_format">%d following</string>
+    <string name="follower_count_format">%d followers</string>
 </resources>
