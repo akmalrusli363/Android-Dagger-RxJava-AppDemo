@@ -24,4 +24,19 @@ class MainViewModel : ViewModel() {
     fun setUserProfile(user: GitHubUser?) {
         _userProfile.postValue(user)
     }
+
+    fun showDisplayName(user: GitHubUser?): String {
+        @Suppress("UselessCallOnNotNull")
+        return when {
+            user == null -> {
+                "User not found :("
+            }
+            user.fullname.isNullOrEmpty() -> {
+                "@${userProfile.value?.username}"
+            }
+            else -> {
+                "${user.fullname} (@${user.username})"
+            }
+        }
+    }
 }

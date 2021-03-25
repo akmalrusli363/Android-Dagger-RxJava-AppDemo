@@ -4,8 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 
 data class GitHubUser(
+    @SerializedName("html_url")
+    val profileURL: String,
     @SerializedName("login")
     val username: String,
+    @SerializedName("name")
+    val fullname: String,
     @SerializedName("public_repos")
     val repoCount: Int,
     @SerializedName("followers")
