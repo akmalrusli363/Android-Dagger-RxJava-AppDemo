@@ -1,7 +1,6 @@
 package com.android.example.daggerrxjavademo.core
 
 import android.app.Application
-import com.android.example.daggerrxjavademo.injector.*
 import com.android.example.daggerrxjavademo.injector.component.AppComponent
 import com.android.example.daggerrxjavademo.injector.component.DaggerAppComponent
 import com.android.example.daggerrxjavademo.injector.component.DaggerUserComponent
