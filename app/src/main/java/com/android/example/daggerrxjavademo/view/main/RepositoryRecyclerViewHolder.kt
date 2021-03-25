@@ -1,5 +1,8 @@
 package com.android.example.daggerrxjavademo.view.main
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import com.android.example.daggerrxjavademo.databinding.RvRepositoryItemBinding
 import com.android.example.daggerrxjavademo.model.Repository
@@ -11,11 +14,20 @@ class RepositoryRecyclerViewHolder(private val itemBinding: RvRepositoryItemBind
 
     fun bind(repositoryItem: Repository) {
         item = repositoryItem
-        item.apply {
-            itemBinding.tvRepositoryName.text = name
-            itemBinding.tvRepositoryFullname.text = fullName
-            itemBinding.tvDescription.text = description ?: noDescriptionString
-            itemBinding.executePendingBindings()
+        itemBinding.apply {
+            tvRepositoryName.text = item.name
+            tvRepositoryFullname.text = item.fullName
+            tvDescription.text = item.description ?: noDescriptionString
+            root.setOnClickListener {
+                visitRepositoryLink(it.context, item)
+            }
+            executePendingBindings()
         }
+    }
+
+    private fun visitRepositoryLink(context: Context, repository: Repository) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(repository.repositoryURL)
+        context.startActivity(intent)
     }
 }
