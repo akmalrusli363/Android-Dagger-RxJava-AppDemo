@@ -10,7 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
 import com.android.example.daggerrxjavademo.injector.module.Cached
 import com.android.example.daggerrxjavademo.injector.module.NonCached
+import com.android.example.daggerrxjavademo.model.Repository
 import com.android.example.daggerrxjavademo.model.RepositoryFetcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -41,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.viewModel = viewModel
         binding.rvRepositories.adapter = RepositoryRecyclerAdapter()
-        binding.svUserSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        binding.svUserSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     search(query)
@@ -61,17 +65,20 @@ class MainActivity : AppCompatActivity() {
         viewModel.searchQuery = query
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
 
-        Thread {
-            val result = RepositoryFetcher(this).fetchRepository(query)
-            Log.d("GitSearcher", "Found $result")
-            runOnUiThread {
-                viewModel.setRepositoryData(result ?: listOf())
-                toggleResultAvailability(result != null)
+        GlobalScope.run {
+            launch(Dispatchers.IO) {
+                val result = RepositoryFetcher(this@MainActivity).fetchRepository(query)
+                Log.d("GitSearcher", "Found $result")
+
+                launch(Dispatchers.Main) {
+                    viewModel.setRepositoryData(result ?: listOf())
+                    toggleResultAvailability(result != null)
+                }
             }
-        }.start()
+        }
     }
 
-    private fun toggleResultAvailability(available:Boolean) {
+    private fun toggleResultAvailability(available: Boolean) {
         binding.apply {
             if (available) {
                 llUserNotExist.visibility = View.GONE
