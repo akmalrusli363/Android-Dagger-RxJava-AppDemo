@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
 import com.android.example.daggerrxjavademo.injector.module.Cached
 import com.android.example.daggerrxjavademo.injector.module.NonCached
-import com.android.example.daggerrxjavademo.model.RepositoryFetcher
+import com.android.example.daggerrxjavademo.view.viewModel.ViewModelFactory
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -26,9 +26,12 @@ class MainActivity : AppCompatActivity() {
     @NonCached
     lateinit var okHttpClient: OkHttpClient
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
 
         Thread {
-            val result = RepositoryFetcher(this).fetchRepository(query)
+            val result = viewModel.fetchData()
             Log.d("GitSearcher", "Found $result")
             runOnUiThread {
                 viewModel.setRepositoryData(result ?: listOf())
