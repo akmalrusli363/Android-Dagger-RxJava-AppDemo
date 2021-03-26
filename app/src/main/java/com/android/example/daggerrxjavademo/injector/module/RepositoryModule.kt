@@ -1,10 +1,14 @@
 package com.android.example.daggerrxjavademo.injector.module
 
-import android.content.Context
+import com.android.example.daggerrxjavademo.injector.scope.UserScope
 import com.android.example.daggerrxjavademo.repository.GitHubRepository
+import com.android.example.daggerrxjavademo.repository.GitHubRepositoryImpl
 import dagger.Binds
+import dagger.Module
 
+@Module
 abstract class RepositoryModule {
+    @UserScope
     @Binds
-    abstract fun provideGitHubRepository(context: Context): GitHubRepository
+    abstract fun provideGitHubRepository(gitHubRepository: GitHubRepositoryImpl): GitHubRepository
 }

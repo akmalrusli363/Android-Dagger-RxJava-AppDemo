@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, NetModule::class, RepositoryModule::class])
+@Component(modules = [AppModule::class, NetModule::class])
 interface AppComponent {
     fun retrofit(): Retrofit
 
