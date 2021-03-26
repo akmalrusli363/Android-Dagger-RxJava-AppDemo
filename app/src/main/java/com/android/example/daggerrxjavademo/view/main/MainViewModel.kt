@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.example.daggerrxjavademo.model.GitHubUser
 import com.android.example.daggerrxjavademo.model.Repository
-import com.android.example.daggerrxjavademo.network.interfaces.GitHubApiInterface
 import com.android.example.daggerrxjavademo.repository.GitHubRepository
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,10 +13,8 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    @Inject
-    lateinit var gitHubRepository: GitHubRepository
-
+class MainViewModel @Inject constructor(private val gitHubRepository: GitHubRepository) :
+    ViewModel() {
     var searchQuery: String = ""
 
     private var _repositories: MutableLiveData<List<Repository>> = MutableLiveData()
@@ -55,9 +52,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun fetchProfile(apiService: GitHubApiInterface, query: String) {
+    fun fetchProfile(query: String) {
         run {
-            getObservableProfile(apiService, query)
+            getObservableProfile(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -73,10 +70,9 @@ class MainViewModel : ViewModel() {
     }
 
     private fun getObservableProfile(
-        apiService: GitHubApiInterface,
         query: String
     ): Observable<Pair<GitHubUser, List<Repository>>> {
-        return apiService.run {
+        return gitHubRepository.run {
             Observable.zip(getUserProfile(query), getUserRepository(query),
                 BiFunction<GitHubUser, List<Repository>, Pair<GitHubUser, List<Repository>>> { user, repos ->
                     return@BiFunction Pair(user, repos)

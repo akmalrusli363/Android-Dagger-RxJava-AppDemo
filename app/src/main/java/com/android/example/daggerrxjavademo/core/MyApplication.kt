@@ -30,4 +30,8 @@ class MyApplication : Application() {
     fun getAppComponent(): AppComponent {
         return appComponent
     }
+
+    fun getUserComponent(): UserComponent {
+        return userComponent
+    }
 }

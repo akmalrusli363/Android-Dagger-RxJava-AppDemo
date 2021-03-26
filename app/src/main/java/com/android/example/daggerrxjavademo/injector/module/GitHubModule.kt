@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 class GitHubModule {
     @Provides
     @UserScope
-    fun providesGitHubInterface(retrofit: Retrofit): GitHubApiInterface {
-        return retrofit.create(GitHubApiInterface::class.java)
+    fun providesGitHubInterface(@Reactive reactiveRetrofit: Retrofit): GitHubApiInterface {
+        return reactiveRetrofit.create(GitHubApiInterface::class.java)
     }
 }

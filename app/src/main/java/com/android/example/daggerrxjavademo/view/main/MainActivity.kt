@@ -1,6 +1,5 @@
 package com.android.example.daggerrxjavademo.view.main
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,30 +8,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.android.example.daggerrxjavademo.core.MyApplication
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
-import com.android.example.daggerrxjavademo.injector.module.Cached
-import com.android.example.daggerrxjavademo.injector.module.NonCached
-import com.android.example.daggerrxjavademo.network.interfaces.GitHubApiInterface
-import okhttp3.OkHttpClient
+import com.android.example.daggerrxjavademo.view.viewModel.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var sharedPreferences: SharedPreferences
+    lateinit var viewModelFactory: ViewModelFactory
 
-    @Inject
-    @Cached
-    lateinit var cachedOkHttpClient: OkHttpClient
-
-    @Inject
-    @NonCached
-    lateinit var okHttpClient: OkHttpClient
-
-    private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as MyApplication).getUserComponent().inject(this)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,9 +56,7 @@ class MainActivity : AppCompatActivity() {
     private fun search(query: String) {
         viewModel.searchQuery = query
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
-        val retrofit = (application as MyApplication).getAppComponent().reactiveRetrofit()
-        val apiService = retrofit.create(GitHubApiInterface::class.java)
-        viewModel.fetchProfile(apiService, query)
+        viewModel.fetchProfile(query)
     }
 
     private fun toggleResultAvailability(available: Boolean) {

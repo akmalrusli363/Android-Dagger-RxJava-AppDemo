@@ -8,7 +8,7 @@ import dagger.Module
 
 @Module
 abstract class RepositoryModule {
-    @UserScope
     @Binds
+    @UserScope
     abstract fun provideGitHubRepository(gitHubRepository: GitHubRepositoryImpl): GitHubRepository
 }
