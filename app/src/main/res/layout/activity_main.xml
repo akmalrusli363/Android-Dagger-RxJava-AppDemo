@@ -34,78 +34,95 @@
             android:layout_margin="@dimen/space_medium"
             android:background="@color/primary_light" />
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/ll_user_profile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/space_medium"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_username"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_user_properties"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/space_medium"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                    android:text="@{viewModel.showDisplayName(viewModel.userProfile)}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="GitHub User (@gh-user)" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_repo_counts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/space_small"
-                    android:text="@{@string/repository_count_format(viewModel.userProfile.repoCount)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_following_counts"
-                    app:layout_constraintHorizontal_chainStyle="spread"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_username"
-                    tools:text="20 public repos" />
+                    <ImageView
+                        android:id="@+id/iv_profile_picture"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
 
-                <TextView
-                    android:id="@+id/tv_following_counts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/space_small"
-                    android:text="@{@string/following_count_format(viewModel.userProfile.following)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_follower_counts"
-                    app:layout_constraintStart_toEndOf="@+id/tv_repo_counts"
-                    app:layout_constraintTop_toBottomOf="@id/tv_username"
-                    tools:text="12 followings" />
+                        android:contentDescription="@{viewModel.userProfile.username}"
+                        app:imageURL="@{viewModel.userProfile.avatarURL}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/ic_baseline_error_large" />
 
-                <TextView
-                    android:id="@+id/tv_follower_counts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/space_small"
-                    android:text="@{@string/follower_count_format(viewModel.userProfile.followers)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_following_counts"
-                    app:layout_constraintTop_toBottomOf="@id/tv_username"
-                    tools:text="45 followers" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/space_medium"
+                        android:text="@{viewModel.showDisplayName(viewModel.userProfile)}"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_profile_picture"
+                        tools:text="GitHub User (@gh-user)" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_repositories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:listData="@{viewModel.repositories}"
-                tools:listitem="@layout/rv_repository_item" />
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_repo_counts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/space_small"
+                        android:text="@{@string/repository_count_format(viewModel.userProfile.repoCount)}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_following_counts"
+                        app:layout_constraintHorizontal_chainStyle="spread"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_username"
+                        tools:text="20 public repos" />
+
+                    <TextView
+                        android:id="@+id/tv_following_counts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/space_small"
+                        android:text="@{@string/following_count_format(viewModel.userProfile.following)}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_follower_counts"
+                        app:layout_constraintStart_toEndOf="@+id/tv_repo_counts"
+                        app:layout_constraintTop_toBottomOf="@id/tv_username"
+                        tools:text="12 followings" />
+
+                    <TextView
+                        android:id="@+id/tv_follower_counts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/space_small"
+                        android:text="@{@string/follower_count_format(viewModel.userProfile.followers)}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_following_counts"
+                        app:layout_constraintTop_toBottomOf="@id/tv_username"
+                        tools:text="45 followers" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_repositories"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:listData="@{viewModel.repositories}"
+                    tools:listitem="@layout/rv_repository_item" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
             android:id="@+id/ll_user_not_exist"

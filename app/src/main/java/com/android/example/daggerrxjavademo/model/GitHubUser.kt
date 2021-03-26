@@ -10,6 +10,8 @@ data class GitHubUser(
     val username: String,
     @SerializedName("name")
     val fullname: String,
+    @SerializedName("avatar_url")
+    val avatarURL: String?,
     @SerializedName("public_repos")
     val repoCount: Int,
     @SerializedName("followers")
