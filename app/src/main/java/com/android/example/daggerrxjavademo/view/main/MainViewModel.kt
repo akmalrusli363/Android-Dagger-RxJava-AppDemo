@@ -1,10 +1,16 @@
 package com.android.example.daggerrxjavademo.view.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.example.daggerrxjavademo.model.GitHubUser
 import com.android.example.daggerrxjavademo.model.Repository
+import com.android.example.daggerrxjavademo.network.interfaces.GitHubApiInterface
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 
 class MainViewModel : ViewModel() {
     var searchQuery: String = ""
@@ -17,11 +23,15 @@ class MainViewModel : ViewModel() {
     val userProfile: LiveData<GitHubUser>
         get() = _userProfile
 
-    fun setRepositoryData(repositories: List<Repository>) {
+    private var _resultSuccess: MutableLiveData<Boolean> = MutableLiveData()
+    val resultSuccess: LiveData<Boolean>
+        get() = _resultSuccess
+
+    private fun setRepositoryData(repositories: List<Repository>) {
         _repositories.postValue(repositories)
     }
 
-    fun setUserProfile(user: GitHubUser?) {
+    private fun setUserProfile(user: GitHubUser?) {
         _userProfile.postValue(user)
     }
 
@@ -37,6 +47,35 @@ class MainViewModel : ViewModel() {
             else -> {
                 "${user.fullname} (@${user.username})"
             }
+        }
+    }
+
+    fun fetchProfile(apiService: GitHubApiInterface, query: String) {
+        run {
+            getObservableProfile(apiService, query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    Log.d("GitSearcher", "Found $it")
+                    setUserProfile(it.first)
+                    setRepositoryData(it.second)
+                    _resultSuccess.value = (it != null)
+                }, {
+                    Log.e("GitSearcher", it.localizedMessage, it)
+                    _resultSuccess.value = false
+                })
+        }
+    }
+
+    private fun getObservableProfile(
+        apiService: GitHubApiInterface,
+        query: String
+    ): Observable<Pair<GitHubUser, List<Repository>>> {
+        return apiService.run {
+            Observable.zip(getUserProfile(query), getUserRepository(query),
+                BiFunction<GitHubUser, List<Repository>, Pair<GitHubUser, List<Repository>>> { user, repos ->
+                    return@BiFunction Pair(user, repos)
+                })
         }
     }
 }
