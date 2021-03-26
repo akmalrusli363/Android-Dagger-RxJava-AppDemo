@@ -7,14 +7,17 @@ import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.android.example.daggerrxjavademo.core.MyApplication
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
 import com.android.example.daggerrxjavademo.injector.module.Cached
 import com.android.example.daggerrxjavademo.injector.module.NonCached
-import com.android.example.daggerrxjavademo.model.DataFetcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.android.example.daggerrxjavademo.model.GitHubUser
+import com.android.example.daggerrxjavademo.model.Repository
+import com.android.example.daggerrxjavademo.network.interfaces.GitHubApiInterface
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -64,32 +67,34 @@ class MainActivity : AppCompatActivity() {
     private fun search(query: String) {
         viewModel.searchQuery = query
         Log.d("GitSearcher", "Searching... ${viewModel.searchQuery}")
+        val retrofit = (application as MyApplication).getAppComponent().reactiveRetrofit()
+        val apiService = retrofit.create(GitHubApiInterface::class.java)
+        fetchProfile(apiService, query)
+    }
 
-        GlobalScope.run {
-            fetchUserProfile(this, query)
-            fetchUserRepository(this, query)
+    private fun fetchProfile(apiService: GitHubApiInterface, query: String) {
+        run {
+            getObservableProfile(apiService, query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Log.d("GitSearcher", "Found $it")
+                    viewModel.setUserProfile(it.first)
+                    viewModel.setRepositoryData(it.second)
+                    toggleResultAvailability(it != null)
+                }
         }
     }
 
-    private fun fetchUserProfile(coroutineScope: CoroutineScope, query: String) {
-        coroutineScope.launch(Dispatchers.IO) {
-            val userProfile = DataFetcher(this@MainActivity).fetchUserProfile(query)
-            Log.d("GitSearcher", "Found $userProfile")
-            launch(Dispatchers.Main) {
-                viewModel.setUserProfile(userProfile)
-            }
-        }
-    }
-
-    private fun fetchUserRepository(coroutineScope: CoroutineScope, query: String) {
-        coroutineScope.launch(Dispatchers.IO) {
-            val listRepos = DataFetcher(this@MainActivity).fetchRepository(query)
-            Log.d("GitSearcher", "Found $listRepos")
-
-            launch(Dispatchers.Main) {
-                viewModel.setRepositoryData(listRepos ?: listOf())
-                toggleResultAvailability(listRepos != null)
-            }
+    private fun getObservableProfile(
+        apiService: GitHubApiInterface,
+        query: String
+    ): Observable<Pair<GitHubUser, List<Repository>>> {
+        return apiService.run {
+            Observable.zip(getUserProfile(query), getUserRepository(query),
+                BiFunction<GitHubUser, List<Repository>, Pair<GitHubUser, List<Repository>>> { user, repos ->
+                    return@BiFunction Pair(user, repos)
+                })
         }
     }
 

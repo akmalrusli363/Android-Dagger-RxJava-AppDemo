@@ -1,10 +1,7 @@
 package com.android.example.daggerrxjavademo.injector.component
 
 import android.content.SharedPreferences
-import com.android.example.daggerrxjavademo.injector.module.AppModule
-import com.android.example.daggerrxjavademo.injector.module.Cached
-import com.android.example.daggerrxjavademo.injector.module.NetModule
-import com.android.example.daggerrxjavademo.injector.module.NonCached
+import com.android.example.daggerrxjavademo.injector.module.*
 import dagger.Component
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -13,7 +10,11 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [AppModule::class, NetModule::class])
 interface AppComponent {
+    @Callback
     fun retrofit(): Retrofit
+
+    @Reactive
+    fun reactiveRetrofit(): Retrofit
 
     @Cached
     fun cachedOkHttpClient(): OkHttpClient

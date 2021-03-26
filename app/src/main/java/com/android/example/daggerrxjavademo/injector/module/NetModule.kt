@@ -11,8 +11,8 @@ import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -56,6 +56,7 @@ class NetModule(private val baseUrl: String) {
 
     @Provides
     @Singleton
+    @Callback
     fun provideRetrofit(gson: Gson, @Cached okHttpClient: OkHttpClient) : Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -63,14 +64,16 @@ class NetModule(private val baseUrl: String) {
             .client(okHttpClient)
             .build()
     }
+
+    @Provides
+    @Singleton
+    @Reactive
+    fun provideReactiveRetrofit(gson: Gson, @Cached okHttpClient: OkHttpClient) : Retrofit {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .build()
+    }
 }
-
-@Qualifier
-@MustBeDocumented
-@Retention(AnnotationRetention.RUNTIME)
-annotation class NonCached
-
-@Qualifier
-@MustBeDocumented
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Cached
