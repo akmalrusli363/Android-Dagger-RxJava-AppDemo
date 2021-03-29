@@ -1,41 +1,33 @@
 package com.android.example.daggerrxjavademo.view.main
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.android.example.daggerrxjavademo.core.MyApplication
 import com.android.example.daggerrxjavademo.databinding.ActivityMainBinding
-import com.android.example.daggerrxjavademo.injector.module.Cached
-import com.android.example.daggerrxjavademo.injector.module.NonCached
+import com.android.example.daggerrxjavademo.injector.component.UserComponent
 import com.android.example.daggerrxjavademo.view.viewModel.ViewModelFactory
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    @Inject
-    @Cached
-    lateinit var cachedOkHttpClient: OkHttpClient
-
-    @Inject
-    @NonCached
-    lateinit var okHttpClient: OkHttpClient
-
-    @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var userComponent: UserComponent
+
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userComponent = (application as MyApplication).getUserComponent()
+        userComponent.inject(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
