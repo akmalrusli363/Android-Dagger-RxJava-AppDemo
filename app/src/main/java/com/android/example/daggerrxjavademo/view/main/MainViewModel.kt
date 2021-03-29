@@ -7,12 +7,17 @@ import androidx.lifecycle.ViewModel
 import com.android.example.daggerrxjavademo.model.GitHubUser
 import com.android.example.daggerrxjavademo.model.Repository
 import com.android.example.daggerrxjavademo.network.interfaces.GitHubApiInterface
+import com.android.example.daggerrxjavademo.repository.GitHubRepository
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 class MainViewModel : ViewModel() {
+    @Inject
+    lateinit var gitHubRepository: GitHubRepository
+
     var searchQuery: String = ""
 
     private var _repositories: MutableLiveData<List<Repository>> = MutableLiveData()
